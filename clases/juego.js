@@ -6,13 +6,11 @@ class Juego {
     this.personas = [];
     this.clientes = [];
     this.mostradores = [];
-    
     this.mesas = [];
     this.paredes = [];
     this.anaqueles = [];
     this.teclado = {};
     this.mouse = {};
-    this.ahora = performance.now();
 
     this.targetCamara = null;
     this.anchoMundo = 2000;
@@ -51,8 +49,6 @@ class Juego {
     this.ponerFondo();
     this.crearEventListeners();
     this.crearNivel();
-
-    
   }
 
   ponerFondo() {
@@ -63,36 +59,18 @@ class Juego {
   }
 
   crearEventListeners() {
-    window.onmousemove = (e) => {
-      this.mouse.x = e.x;
-      this.mouse.y = e.y;
-    };
-
-    window.onkeydown = (evento) => {
-      this.teclado[evento.key.toLowerCase()] = true;
-    };
-
-    window.onkeyup = (evento) => {
-      delete this.teclado[evento.key.toLowerCase()];
-    };
-
+    window.onkeydown = (evento) => { this.teclado[evento.key.toLowerCase()] = true; };
+    window.onkeyup = (evento) => { delete this.teclado[evento.key.toLowerCase()]; };
     window.addEventListener('resize', () => {
-      if (this.pixiApp && this.pixiApp.renderer) {
-        this.pixiApp.renderer.resize(window.innerWidth, window.innerHeight);
-      }
-      if (this.ui) this.ui.redimensionar();
+      if (this.pixiApp && this.pixiApp.renderer) this.pixiApp.renderer.resize(window.innerWidth, window.innerHeight);
+      if (this.uiDinero) this.uiDinero.redimensionar();
     });
   }
 
   async precargarAssets() {
     this.ssChica = await PIXI.Assets.load("spritesheet/chica.json");
     this.jsonNuevoProta = await PIXI.Assets.load("spritesheet/protagonista.json"); 
-
-    await PIXI.Assets.load({
-      alias: 'FuenteDinero',
-      src: 'assets/fuente.otf'
-    });
-
+    await PIXI.Assets.load({ alias: 'FuenteDinero', src: 'assets/fuente.otf' });
     this.texturaFondo = await PIXI.Assets.load("assets/fondo.png");
     this.texturaMesa = await PIXI.Assets.load("assets/mesa.png");
     this.texturaPared = await PIXI.Assets.load("assets/ladrillo.png");
@@ -101,38 +79,21 @@ class Juego {
     this.texturaCuadroUI = await PIXI.Assets.load("assets/UI_DINERO.png");
   }
 
-  ponerMostradores() { 
-    new Mostrador(1650, 600, this);
-  }
-
+  ponerMostradores() { new Mostrador(1000, 500, this); }
+  
   ponerAnaqueles() {
-    const posicionesAnaqueles = [
-      { x: 200, y: 450 }, { x: 350, y: 450 }, { x: 500, y: 450 },
-      { x: 1250, y: 450 }, { x: 1400, y: 450 },
-    ];
-    for (let i = 0; i < posicionesAnaqueles.length; i++) {
-      new Anaquel(posicionesAnaqueles[i].x, posicionesAnaqueles[i].y, this);
-    }
+    const pos = [{ x: 200, y: 450 }, { x: 350, y: 450 }, { x: 500, y: 450 }, { x: 1250, y: 450 }, { x: 1400, y: 450 }];
+    for (let p of pos) new Anaquel(p.x, p.y, this);
   }
 
   ponerParedes() {
-    const posicionesParedes = [
-      { x: 400, y: 910, espejada: false },
-      { x: 1600, y: 910, espejada: true },
-    ];
-    for (let i = 0; i < posicionesParedes.length; i++) {
-      new Pared(posicionesParedes[i].x, posicionesParedes[i].y, this, posicionesParedes[i].espejada);
-    }
+    const pos = [{ x: 400, y: 910, e: false }, { x: 1600, y: 910, e: true }];
+    for (let p of pos) new Pared(p.x, p.y, this, p.e);
   }
 
   ponerMesas() {
-    const posicionesMesas = [
-      { x: 150, y: 780 }, { x: 430, y: 650 }, { x: 700, y: 780 },
-      { x: 1300, y: 780 }, { x: 1800, y: 780 },
-    ];
-    for (let i = 0; i < posicionesMesas.length; i++) {
-      new Mesa(posicionesMesas[i].x, posicionesMesas[i].y, this);
-    }
+    const pos = [{ x: 150, y: 780 }, { x: 430, y: 650 }, { x: 700, y: 780 }, { x: 1300, y: 780 }, { x: 1800, y: 780 }];
+    for (let p of pos) new Mesa(p.x, p.y, this);
   }
 
   crearNivel() {
@@ -144,31 +105,24 @@ class Juego {
     this.ponerAnaqueles();
     this.ponerMostradores(); 
 
-    this.ui = new InterfaceUsuario(this); 
+    this.uiDinero = new UiDinero(this); 
     this.gameLoop();
   }
 
-  asignarTargetCamara(quien) {
-    if (!(quien instanceof GameObject)) return;
-    this.targetCamara = quien;
-  }
-
   moverCamara() {
-    const valorObjetivoDelContainerPrincipalX = -this.targetCamara.posicion.x + window.innerWidth * 0.5;
-    const valorObjetivoDelContainerPrincipalY = -this.targetCamara.posicion.y + window.innerHeight * 0.5;
-    const cuantoLerp = 0.01;
-
-    this.containerPrincipal.x += (valorObjetivoDelContainerPrincipalX - this.containerPrincipal.x) * cuantoLerp;
-    this.containerPrincipal.y += (valorObjetivoDelContainerPrincipalY - this.containerPrincipal.y) * cuantoLerp;
+    const targetX = -this.targetCamara.posicion.x + window.innerWidth * 0.5;
+    const targetY = -this.targetCamara.posicion.y + window.innerHeight * 0.5;
+    this.containerPrincipal.x += (targetX - this.containerPrincipal.x) * 0.01;
+    this.containerPrincipal.y += (targetY - this.containerPrincipal.y) * 0.01;
 
     if (this.containerPrincipal.x > 0) this.containerPrincipal.x = 0;
     if (this.containerPrincipal.y > 0) this.containerPrincipal.y = 0;
 
-    this.limiteDerechoCamara = -this.anchoMundo + window.innerWidth;
-    this.limiteInferiorCamara = -this.altoMundo + window.innerHeight;
+    const limiteDer = -this.anchoMundo + window.innerWidth;
+    const limiteInf = -this.altoMundo + window.innerHeight;
 
-    if (this.containerPrincipal.x < this.limiteDerechoCamara) this.containerPrincipal.x = this.limiteDerechoCamara;
-    if (this.containerPrincipal.y < this.limiteInferiorCamara) this.containerPrincipal.y = this.limiteInferiorCamara;
+    if (this.containerPrincipal.x < limiteDer) this.containerPrincipal.x = limiteDer;
+    if (this.containerPrincipal.y < limiteInf) this.containerPrincipal.y = limiteInf;
   }
 
   atenderClienteEnMostrador() {
@@ -177,58 +131,78 @@ class Juego {
 
     if (mostrador.fila.length === 0) return;
 
-  
-    const distProtaAlMostrador = Math.hypot(this.prota.posicion.x - mostrador.posicion.x, this.prota.posicion.y - mostrador.posicion.y);
-    
+    const distProta = Math.hypot(this.prota.posicion.x - mostrador.posicion.x, this.prota.posicion.y - mostrador.posicion.y);
     const primerCliente = mostrador.fila[0];
-    const distClienteAlMostrador = Math.hypot(primerCliente.posicion.x - mostrador.posicion.x, primerCliente.posicion.y - mostrador.posicion.y);
+    const distCliente = Math.hypot(primerCliente.posicion.x - mostrador.posicion.x, primerCliente.posicion.y - mostrador.posicion.y);
 
-    if (distProtaAlMostrador < 150 && distClienteAlMostrador < 150) {
-      console.log("¡Cliente atendido con J!");
-      
+    if (distProta < 150 && distCliente < 150) {
       mostrador.removerDeLaFila(primerCliente);
+      if (this.uiDinero) this.uiDinero.sumarDinero(100);
+
+      // Buscamos mesas que tengan al menos una silla libre (arriba o abajo)
+      const mesasLibres = this.mesas.filter(m => m.asientos.arriba === null || m.asientos.abajo === null);
       
-    
-      primerCliente.estado = "SALIENDO";
-      primerCliente.target = primerCliente.puntoSpawn; 
+      const decideSentarse = Math.random() > 0.4; // 60% chance de sentarse
 
-     
-      if (this.ui) this.ui.sumarDinero(100);
+      if (decideSentarse && mesasLibres.length > 0) {
+        // Elige una mesa libre al azar
+        const mesaElegida = mesasLibres[Math.floor(Math.random() * mesasLibres.length)];
+        primerCliente.estado = "YENDO_MESA";
+        primerCliente.mesaAsignada = mesaElegida;
 
-     
-      delete this.teclado.j; 
+        // Ocupa el primer asiento libre que encuentre
+        if (mesaElegida.asientos.arriba === null) {
+          mesaElegida.asientos.arriba = primerCliente;
+          primerCliente.asiento = "arriba";
+          primerCliente.target = { x: mesaElegida.posicion.x, y: mesaElegida.posicion.y - mesaElegida.sprite.height - 10 };
+        } else {
+          mesaElegida.asientos.abajo = primerCliente;
+          primerCliente.asiento = "abajo";
+          primerCliente.target = { x: mesaElegida.posicion.x, y: mesaElegida.posicion.y + 40 };
+        }
+      } else {
+        // Solo compró y se va
+        primerCliente.estado = "SALIENDO";
+        primerCliente.target = primerCliente.puntoSpawn; 
+      }
+
+      delete this.teclado.p; 
     }
   }
 
-  eliminarGameObject(objeto) {
-    if (objeto.body) Matter.Composite.remove(this.world, objeto.body);
-    if (objeto.container && objeto.container.parent) objeto.container.parent.removeChild(objeto.container);
-
-    this.clientes = this.clientes.filter(c => c !== objeto);
-    this.personas = this.personas.filter(p => p !== objeto);
-    this.gameObjects = this.gameObjects.filter(g => g !== objeto);
+  atraparLadron() {
+    for (let cliente of this.clientes) {
+      // Si el cliente está en pleno proceso de robo o escapando después de robar
+      if (cliente.estado === "YENDO_ROBAR" || cliente.estado === "SALIENDO") {
+        const dist = Math.hypot(this.prota.posicion.x - cliente.posicion.x, this.prota.posicion.y - cliente.posicion.y);
+        
+        if (dist < 100) { // Distancia de colisión/cercanía
+          cliente.serAtrapado();
+          delete this.teclado.o; // Limpiar la pulsación de la tecla O
+          break; // Atrapar de a uno por vez
+        }
+      }
+    }
   }
 
   gameLoop() {
     Matter.Engine.update(this.engine, 1000 / 60);
 
     if (performance.now() - this.tiempoUltimoCliente > this.frecuenciaClientes) {
-      if (this.clientes.length < 5) {
+      if (this.clientes.length < 15) { 
         new Cliente(0, 0, this.ssChica, this); 
         this.tiempoUltimoCliente = performance.now();
       }
     }
 
-    // SOLUCIÓN: Escuchamos la tecla J
-    if (this.teclado.j) {
-      this.atenderClienteEnMostrador();
-    }
+    if (this.teclado.p) this.atenderClienteEnMostrador();
+    if (this.teclado.o) this.atraparLadron();
 
     for (let i = 0; i < this.gameObjects.length; i++) {
       this.gameObjects[i].update();
     }
 
-    if (this.ui) this.ui.update();
+    if (this.uiDinero) this.uiDinero.update();
 
     this.moverCamara();
     requestAnimationFrame(() => this.gameLoop());
