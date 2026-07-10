@@ -14,7 +14,6 @@ class GameObject {
   }
 
   cambiarAnimacion(cual) {
-
     if (!this.spritesAnimados || !this.spritesAnimados[cual]) return;
 
     this.animacionQueEstamosUsandoAhorita = cual;

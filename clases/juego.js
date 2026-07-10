@@ -4,7 +4,7 @@ class Juego {
     this.pixiInicializado = false;
     this.gameObjects = [];
     this.personas = [];
-    this.clientes = [];
+    this.clientes = []; 
     this.mostradores = [];
     this.mesas = [];
     this.paredes = [];
@@ -68,22 +68,41 @@ class Juego {
   }
 
   async precargarAssets() {
+    // Personajes y entorno general
     this.ssChica = await PIXI.Assets.load("spritesheet/chica.json");
     this.jsonNuevoProta = await PIXI.Assets.load("spritesheet/protagonista.json"); 
     await PIXI.Assets.load({ alias: 'FuenteDinero', src: 'assets/fuente.otf' });
     this.texturaFondo = await PIXI.Assets.load("assets/fondo.png");
     this.texturaMesa = await PIXI.Assets.load("assets/mesa.png");
     this.texturaPared = await PIXI.Assets.load("assets/ladrillo.png");
-    this.texturaAnaquel = await PIXI.Assets.load("assets/anaquel.png");
     this.texturaMostrador = await PIXI.Assets.load("assets/mostrador.png"); 
     this.texturaCuadroUI = await PIXI.Assets.load("assets/UI_DINERO.png");
+    
+    // UI Tienda
+    await PIXI.Assets.load({ alias: 'tienda_boton', src: 'assets/tienda_boton.png' });
+    await PIXI.Assets.load({ alias: 'tienda_menu_fondo', src: 'assets/tienda_fondo.png' });
+
+    // CARGA DE LOS 4 SPRITESHEETS DE ANAQUELES
+    this.texturaAnaquelAzul = await PIXI.Assets.load("spritesheet/anaquel_azul.json");
+    this.texturaAnaquelRojo = await PIXI.Assets.load("spritesheet/anaquel_rojo.json");
+    this.texturaAnaquelVerde = await PIXI.Assets.load("spritesheet/anaquel_verde.json");
+    this.texturaAnaquelPurpura = await PIXI.Assets.load("spritesheet/anaquel_purpura.json");
+
+    // CARGA DE LAS 4 IMÁGENES DE MANGAS (usando los alias que usará el cliente)
+    await PIXI.Assets.load({ alias: 'mangaazul', src: 'assets/mangaazul.png' });
+    await PIXI.Assets.load({ alias: 'mangarojo', src: 'assets/mangarojo.png' });
+    await PIXI.Assets.load({ alias: 'mangaverde', src: 'assets/mangaverde.png' });
+    await PIXI.Assets.load({ alias: 'mangapurpura', src: 'assets/mangapurpura.png' });
   }
 
   ponerMostradores() { new Mostrador(1000, 500, this); }
   
   ponerAnaqueles() {
-    const pos = [{ x: 200, y: 450 }, { x: 350, y: 450 }, { x: 500, y: 450 }, { x: 1250, y: 450 }, { x: 1400, y: 450 }];
-    for (let p of pos) new Anaquel(p.x, p.y, this);
+    // Al crearlos, les pasamos su spritesheet específico y el string identificador
+    new Anaquel(200, 450, this, this.texturaAnaquelAzul, "mangaazul");
+    new Anaquel(350, 450, this, this.texturaAnaquelRojo, "mangarojo");
+    new Anaquel(500, 450, this, this.texturaAnaquelVerde, "mangaverde");
+    new Anaquel(1250, 450, this, this.texturaAnaquelPurpura, "mangapurpura");
   }
 
   ponerParedes() {
@@ -106,6 +125,7 @@ class Juego {
     this.ponerMostradores(); 
 
     this.uiDinero = new UiDinero(this); 
+    this.tienda = new TiendaUI(this);
     this.gameLoop();
   }
 
@@ -131,55 +151,28 @@ class Juego {
 
     if (mostrador.fila.length === 0) return;
 
-    const distProta = Math.hypot(this.prota.posicion.x - mostrador.posicion.x, this.prota.posicion.y - mostrador.posicion.y);
     const primerCliente = mostrador.fila[0];
-    const distCliente = Math.hypot(primerCliente.posicion.x - mostrador.posicion.x, primerCliente.posicion.y - mostrador.posicion.y);
+    const distProta = Math.hypot(this.prota.posicion.x - mostrador.posicion.x, this.prota.posicion.y - mostrador.posicion.y);
 
-    if (distProta < 150 && distCliente < 150) {
-      mostrador.removerDeLaFila(primerCliente);
-      if (this.uiDinero) this.uiDinero.sumarDinero(100);
-
-      // Buscamos mesas que tengan al menos una silla libre (arriba o abajo)
-      const mesasLibres = this.mesas.filter(m => m.asientos.arriba === null || m.asientos.abajo === null);
-      
-      const decideSentarse = Math.random() > 0.4; // 60% chance de sentarse
-
-      if (decideSentarse && mesasLibres.length > 0) {
-        // Elige una mesa libre al azar
-        const mesaElegida = mesasLibres[Math.floor(Math.random() * mesasLibres.length)];
-        primerCliente.estado = "YENDO_MESA";
-        primerCliente.mesaAsignada = mesaElegida;
-
-        // Ocupa el primer asiento libre que encuentre
-        if (mesaElegida.asientos.arriba === null) {
-          mesaElegida.asientos.arriba = primerCliente;
-          primerCliente.asiento = "arriba";
-          primerCliente.target = { x: mesaElegida.posicion.x, y: mesaElegida.posicion.y - mesaElegida.sprite.height - 10 };
-        } else {
-          mesaElegida.asientos.abajo = primerCliente;
-          primerCliente.asiento = "abajo";
-          primerCliente.target = { x: mesaElegida.posicion.x, y: mesaElegida.posicion.y + 40 };
-        }
-      } else {
-        // Solo compró y se va
-        primerCliente.estado = "SALIENDO";
-        primerCliente.target = primerCliente.puntoSpawn; 
-      }
-
+    if (distProta < 150 && primerCliente.fsm && primerCliente.fsm.currentStateName === "EsperandoRespuesta") {
+      primerCliente.fsm.setState("Atendido");
       delete this.teclado.p; 
     }
   }
 
   atraparLadron() {
     for (let cliente of this.clientes) {
-      // Si el cliente está en pleno proceso de robo o escapando después de robar
-      if (cliente.estado === "YENDO_ROBAR" || cliente.estado === "SALIENDO") {
-        const dist = Math.hypot(this.prota.posicion.x - cliente.posicion.x, this.prota.posicion.y - cliente.posicion.y);
-        
-        if (dist < 100) { // Distancia de colisión/cercanía
-          cliente.serAtrapado();
-          delete this.teclado.o; // Limpiar la pulsación de la tecla O
-          break; // Atrapar de a uno por vez
+      if (cliente.esLadron && cliente.fsm) {
+        const estadoActual = cliente.fsm.currentStateName;
+
+        if (estadoActual === "Robando" || estadoActual === "Escapando") {
+          const dist = Math.hypot(this.prota.posicion.x - cliente.posicion.x, this.prota.posicion.y - cliente.posicion.y);
+          
+          if (dist < 100) { 
+            cliente.fsm.setState("Atrapado"); 
+            delete this.teclado.o; 
+            break; 
+          }
         }
       }
     }
@@ -190,7 +183,15 @@ class Juego {
 
     if (performance.now() - this.tiempoUltimoCliente > this.frecuenciaClientes) {
       if (this.clientes.length < 15) { 
-        new Cliente(0, 0, this.ssChica, this); 
+        const spawnX = Math.random() > 0.5 ? 50 : this.anchoMundo - 50;
+        const spawnY = this.altoMundo - 20;
+
+        if (Math.random() < 0.2 && typeof Ladron !== 'undefined') {
+          new Ladron(spawnX, spawnY, this.ssChica, this);
+        } else {
+          new Cliente(spawnX, spawnY, this.ssChica, this); 
+        }
+
         this.tiempoUltimoCliente = performance.now();
       }
     }

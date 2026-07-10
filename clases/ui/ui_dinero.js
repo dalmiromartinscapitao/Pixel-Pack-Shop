@@ -1,7 +1,8 @@
 class UiDinero {
   constructor(juego) {
     this.juego = juego;
-    this.dinero = 0;
+    // Empezamos con 500 para poder probar la tienda
+    this.dinero = 500; 
     this.brilloIntensidad = 1.0;
     this.bucleBrilloActivo = false;
 
@@ -46,6 +47,12 @@ class UiDinero {
     this.brilloIntensidad = 2.0; 
     this.bucleBrilloActivo = true;
     this.containerUI.filters = [this.filtroBrillo];
+  }
+
+  // NUEVO MÉTODO: Para que la tienda pueda cobrarte
+  restarDinero(cantidad) {
+    this.dinero -= cantidad;
+    this.textoContador.text = `$${this.dinero}`;
   }
 
   update() {
