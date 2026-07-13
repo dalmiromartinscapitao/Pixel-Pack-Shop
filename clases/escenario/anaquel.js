@@ -54,4 +54,8 @@ class Anaquel extends GameObject {
         }
         return false; 
     }
+
+    getTipo() {
+        return this.tipo;
+    }
 }

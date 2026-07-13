@@ -1,17 +1,17 @@
+
 class UiDinero {
   constructor(juego) {
     this.juego = juego;
-    // Empezamos con 500 para poder probar la tienda
     this.dinero = 500; 
     this.brilloIntensidad = 1.0;
     this.bucleBrilloActivo = false;
 
-    this.containerUI = new PIXI.Container();
-    this.containerUI.label = "Capa_UI_Dinero";
-    this.juego.pixiApp.stage.addChild(this.containerUI);
+    this.container = new PIXI.Container();
+    this.container.label = "Capa_UI_Dinero";
+    this.juego.pixiApp.stage.addChild(this.container);
 
     this.filtroBrillo = new PIXI.ColorMatrixFilter();
-    this.containerUI.filters = null;
+    this.container.filters = null;
 
     this.crearElementos();
   }
@@ -22,7 +22,7 @@ class UiDinero {
     this.cuadro.x = window.innerWidth - 20;
     this.cuadro.y = 20;
     this.cuadro.scale.set(0.8);
-    this.containerUI.addChild(this.cuadro);
+    this.container.addChild(this.cuadro);
 
     const estiloTexto = new PIXI.TextStyle({
       fontFamily: 'FuenteDinero',
@@ -37,19 +37,21 @@ class UiDinero {
     this.textoContador.anchor.set(0.5, 0.5);
     this.textoContador.x = this.cuadro.x - (this.cuadro.width / 2);
     this.textoContador.y = this.cuadro.y + (this.cuadro.height / 2);
-    this.containerUI.addChild(this.textoContador);
+    this.container.addChild(this.textoContador);
   }
 
   sumarDinero(cantidad) {
     this.dinero += cantidad;
     this.textoContador.text = `$${this.dinero}`;
+
+    this.juego.sonidoPlata.currentTime = 0; 
+    this.juego.sonidoPlata.play();
     
     this.brilloIntensidad = 2.0; 
     this.bucleBrilloActivo = true;
-    this.containerUI.filters = [this.filtroBrillo];
+    this.container.filters = [this.filtroBrillo];
   }
 
-  // NUEVO MÉTODO: Para que la tienda pueda cobrarte
   restarDinero(cantidad) {
     this.dinero -= cantidad;
     this.textoContador.text = `$${this.dinero}`;
@@ -61,7 +63,7 @@ class UiDinero {
         this.brilloIntensidad -= 0.05; 
         this.filtroBrillo.brightness(this.brilloIntensidad, false);
       } else {
-        this.containerUI.filters = null;
+        this.container.filters = null;
         this.bucleBrilloActivo = false;
       }
     }

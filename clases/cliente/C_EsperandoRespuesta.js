@@ -1,14 +1,26 @@
 class C_EsperandoRespuesta extends FSMState {
   onEnter() { 
-    this.owner.mostrarMensaje("¡Hola! Quiero 1 ítem"); 
+    console.log(`[Cliente ${this.owner.id}] Entró al estado: EsperandoRespuesta`);
+    
+    this.owner.textoMensaje.anchor.set(0, 1); 
+    this.owner.textoMensaje.x = 20; 
+    this.owner.textoMensaje.y = -40; 
+    
+    this.owner.mostrarMensaje(`¡Quiero:\n${this.owner.pedido}!`); 
   }
   
   update() { 
     this.owner.cambiarAnimacion("atras"); 
+
+    if (this.currentFrame === 600) {
+        this.owner.ocultarMensaje();
+    }
   }
   
   doChecks() {
-    // 20 segundos a 60 FPS = 1200 frames de tolerancia
-    if (this.currentFrame > 1200) this.fsm.setState("Enojado");
+ 
+    if (this.currentFrame > 1200) {
+        this.fsm.setState("Enojado");
+    }
   }
 }

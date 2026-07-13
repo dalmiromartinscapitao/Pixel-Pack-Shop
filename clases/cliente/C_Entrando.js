@@ -1,5 +1,6 @@
 class C_Entrando extends FSMState {
   onEnter() { 
-    this.fsm.setState("IrAFila"); // Transición instantánea
+    console.log(`[Cliente ${this.owner.id}] Entró al estado: Entrando`);
+    this.fsm.setState("IrAFila"); 
   }
 }

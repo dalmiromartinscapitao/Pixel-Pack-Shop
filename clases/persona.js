@@ -10,8 +10,44 @@ class Persona extends GameObject {
     this.body = Matter.Bodies.circle(x, y, 12, { frictionAir: 0.15 });
     Matter.Composite.add(this.juego.world, this.body);
 
+    this.spritesAnimados = {};
+    this.animacionActual = null;
+
     this.cargarSpritesAnimados(textures);
-    this.cambiarAnimacion("abajo");
+    this.cambiarAnimacion("frente"); 
+  }
+
+  cargarSpritesAnimados(textures) {
+    if (textures && textures.animations) {
+      for (let key in textures.animations) {
+        const anim = new PIXI.AnimatedSprite(textures.animations[key]);
+        anim.anchor.set(0.5, 1);
+        anim.animationSpeed = 0.12; 
+        anim.visible = false;
+        
+        anim.scale.set(1); 
+        
+        this.spritesAnimados[key] = anim;
+        this.container.addChild(anim);
+      }
+    }
+    
+    this.container.scale.set(2.5);
+  }
+
+  cambiarAnimacion(nombre) {
+    if (this.animacionActual === nombre) return;
+    
+    if (this.animacionActual && this.spritesAnimados[this.animacionActual]) {
+      this.spritesAnimados[this.animacionActual].visible = false;
+      this.spritesAnimados[this.animacionActual].stop();
+    }
+
+    if (this.spritesAnimados[nombre]) {
+      this.spritesAnimados[nombre].visible = true;
+      this.spritesAnimados[nombre].play();
+      this.animacionActual = nombre;
+    }
   }
 
   aplicarFuerza(x, y) {
@@ -28,25 +64,29 @@ class Persona extends GameObject {
     }
   }
 
-  // MÉTODO NUEVO PARA IA: Resuelve el caminar y animar hacia un punto automáticamente
   moverseHacia(tx, ty) {
     const dx = tx - this.posicion.x;
     const dy = ty - this.posicion.y;
     const distancia = Math.hypot(dx, dy);
 
     if (distancia > 15) {
-      const fuerza = 0.00015;
+      const fuerza = 0.00005 * this.velocidadMaxima;
       this.aplicarFuerza((dx / distancia) * fuerza, (dy / distancia) * fuerza);
 
       if (this.spritesAnimados) {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          this.cambiarAnimacion(dx > 0 ? "derecha" : "izquierda");
-        } else {
-          this.cambiarAnimacion(dy > 0 ? "frente" : "atras");
+
+        this.cambiarAnimacion(dy > 0 ? "frente" : "atras");
+        
+        if (this.spritesAnimados[this.animacionActual] && !this.spritesAnimados[this.animacionActual].playing) {
+            this.spritesAnimados[this.animacionActual].play();
         }
       }
     } else {
-      Matter.Body.setVelocity(this.body, { x: 0, y: 0 }); // Frena
+      Matter.Body.setVelocity(this.body, { x: 0, y: 0 });
+      
+      if (this.animacionActual && this.spritesAnimados[this.animacionActual]) {
+         this.spritesAnimados[this.animacionActual].gotoAndStop(0);
+      }
     }
     return distancia;
   }

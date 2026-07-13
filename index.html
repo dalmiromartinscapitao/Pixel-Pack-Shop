@@ -1,34 +1,54 @@
 <html>
-<head> 
-    <style>
-        body {
-            margin: 0px
-        }
-    </style>
+<style>body { margin: 0px }</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
     <script src="utils.js"></script>
     <script src="pixi.js"></script>
+    <script src="clases/menu_principal.js"></script>    
+    <script src="clases/PantallaResumen.js"></script>    
+    
+    <!-- 1. Cargar el sistema de estados primero -->
     <script src="clases/fsm/fsm.js"></script>
     <script src="clases/fsm/fsm_state.js"></script>
+
+    <!-- 2. Cargar las clases BASE antes que nada -->
+    <script src="clases/gameobject.js"></script>
+    <script src="clases/persona.js"></script>
+
+    <!-- 3. Ahora cargar los estados de los clientes -->
     <script src="clases/cliente/C_IrALocal.js"></script>
     <script src="clases/cliente/C_Entrando.js"></script>
     <script src="clases/cliente/C_IrAFila.js"></script>
+    <script src="clases/cliente/C_YendoPuerta.js"></script>
     <script src="clases/cliente/C_EsperandoRespuesta.js"></script>
     <script src="clases/cliente/C_Atendido.js"></script>
     <script src="clases/cliente/C_Enojado.js"></script>
     <script src="clases/cliente/C_Saliendo.js"></script>
-    <script src="clases/gameobject.js"></script>
-    <script src="clases/persona.js"></script>
+    <!-- 4. Ahora sí, cargar la clase Cliente que usa Persona -->
+    <script src="clases/cliente/cliente.js"></script>
+
+    <!-- 5. Cargar los estados y clase del Ladron -->
+    <script src="clases/ladron/L_AtrapadoSaliendo.js"></script>
+    <script src="clases/ladron/L_YendoPuerta.js"></script>
+    <script src="clases/ladron/L_Atrapado.js"></script>
+    <script src="clases/ladron/L_BuscandoAnaquel.js"></script>
+    <script src="clases/ladron/L_Entrando.js"></script>
+    <script src="clases/ladron/L_Escapando.js"></script>
+    <script src="clases/ladron/L_Robando.js"></script>
+    <script src="clases/ladron/ladron.js"></script>
+
+    <!-- 6. Cargar escenarios y protagonista -->
+    <script src="clases/escenario/ventana.js"></script>
     <script src="clases/escenario/pared.js"></script>
     <script src="clases/escenario/mesa.js"></script>
     <script src="clases/escenario/anaquel.js"></script>
     <script src="clases/escenario/mostrador.js"></script>
     <script src="clases/prota.js"></script>
-    <script src="clases/ladron.js"></script>
+
+    <!-- 7. UI y finalmente el Juego que usa todas las clases anteriores -->
     <script src="clases/ui/ui_dinero.js"></script>
     <script src="clases/ui/tienda.js"></script>
     <script src="clases/juego.js"></script>
-    <script src="clases/cliente/cliente.js"></script>
+  
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
