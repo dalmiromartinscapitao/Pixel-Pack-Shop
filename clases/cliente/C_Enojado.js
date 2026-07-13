@@ -2,7 +2,7 @@
   class C_Enojado extends FSMState {
   onEnter() {
     console.log(`[Cliente ${this.owner.id}] Entró al estado: Enojado`);
-    this.owner.mostrarMensaje("¡Qué lentos!");
+    this.owner.mostrarMensaje("Que lentos");
     
     if (this.owner.spritesAnimados) {
       for (let key in this.owner.spritesAnimados) {

@@ -6,7 +6,7 @@ class C_EsperandoRespuesta extends FSMState {
     this.owner.textoMensaje.x = 20; 
     this.owner.textoMensaje.y = -40; 
     
-    this.owner.mostrarMensaje(`¡Quiero:\n${this.owner.pedido}!`); 
+    this.owner.mostrarMensaje(`Quiero un \n${this.owner.pedido}`); 
   }
   
   update() { 

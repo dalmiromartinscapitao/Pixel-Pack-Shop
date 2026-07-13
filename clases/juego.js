@@ -232,7 +232,7 @@ class Juego {
     const tiempoPasadoMs = performance.now() - this.tiempoInicio;
     const minutos = tiempoPasadoMs / 60000;
 
-    if (minutos < 1) return ["mangaazul"];
+
     if (minutos < 2) return ["mangaazul", "mangarojo"];
     if (minutos < 3) return ["mangaazul", "mangarojo", "mangaverde"];
     
@@ -297,9 +297,6 @@ class Juego {
             if (dist < 150) { 
               primerCliente.fsm.setState("EsperandoRespuesta");
             }
-          }
-          if (primerCliente.fsm.currentStateName === "EsperandoRespuesta") {
-            primerCliente.mostrarMensaje(`¡Hola!\nQuiero un\n${primerCliente.pedido}`);
           }
         }
       }

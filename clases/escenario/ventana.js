@@ -21,12 +21,20 @@ class Ventana {
         this.juego.gameObjects.push(this);
     }
 
-    update() {
-        this.tiempoAcumulado += 16.6; 
-        if (this.tiempoAcumulado >= 20000) { 
-            this.tiempoAcumulado = 0;
-            this.frameActual = (this.frameActual + 1) % 12;
-            this.sprite.texture = this.texturas[this.frameActual];
-        }
+   update() {
+    
+    const tiempoTranscurrido = performance.now() - this.juego.tiempoInicio;
+
+ 
+    let nuevoFrame = Math.floor((tiempoTranscurrido / this.juego.duracionNivel) * 12);
+
+    
+    if (nuevoFrame > 11) nuevoFrame = 11;
+    if (nuevoFrame < 0) nuevoFrame = 0;
+
+    if (this.frameActual !== nuevoFrame) {
+        this.frameActual = nuevoFrame;
+        this.sprite.texture = this.texturas[this.frameActual];
     }
+}
 }
