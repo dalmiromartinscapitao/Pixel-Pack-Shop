@@ -136,26 +136,30 @@ class TiendaUI {
         this.renderizarCatalogo();
     }
 
-    ejecutarCompra() {
-        if (this.carrito.length === 0) return;
+   ejecutarCompra() {
+    if (this.carrito.length === 0) return;
 
-        let costoReal = 0;
-        this.carrito.forEach(item => {
-            const anaquel = this.juego.anaqueles.find(a => 
-                a.mangas.length < 14 && (a.mangas.length === 0 || a.mangas[0] === item)
-            );
-            if (anaquel) {
-                anaquel.agregarManga(item);
-                costoReal += this.juego.precios[item].compra;
-            }
-        });
+    let costoReal = 0;
+    this.carrito.forEach(item => {
 
-        if (costoReal > 0) {
-            this.juego.uiDinero.restarDinero(costoReal);
-            this.resetTienda();
-            this.toggleTienda();
+        const anaquel = this.juego.anaqueles.find(a => 
+            a.mangas.length < 14 && a.tipo === item
+        );
+        
+        if (anaquel) {
+            anaquel.agregarManga(item);
+            costoReal += this.juego.precios[item].compra;
+        } else {
+            console.warn(`No hay anaqueles disponibles para: ${item}`);
         }
+    });
+
+    if (costoReal > 0) {
+        this.juego.uiDinero.restarDinero(costoReal);
+        this.resetTienda();
+        this.toggleTienda();
     }
+}
 
     resetTienda() {
         this.carrito = [];
