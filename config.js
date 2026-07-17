@@ -4,7 +4,7 @@ const CONFIGURACION = {
         fuerzaMovimiento: 0.005
     },
     cliente: {
-        velocidadMaxima: 2.8
+        velocidadMaxima: 6.8
     },
     ladron: {
         velocidadMaxima: 3.5

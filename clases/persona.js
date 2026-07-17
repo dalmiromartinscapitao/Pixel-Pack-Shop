@@ -92,8 +92,28 @@ class Persona extends GameObject {
   }
 
   update() {
+    this.separarseDeLasPersonasYCosasCercanas()
     this.limitarVelocidad();
     super.update();
+  }
+
+  separarseDeLasPersonasYCosasCercanas(){
+    if(this instanceof Protagonista) return
+
+    const radioEmpuje = 80;
+    const fuerzaEmpuje = 0.009 * this.velocidadMaxima;
+    this.juego.personas.forEach(otraPersona => {
+      if(otraPersona === this) return;
+
+      const dx = this.posicion.x - otraPersona.posicion.x;
+      const dy = this.posicion.y - otraPersona.posicion.y;
+      const distanciaCuadrada=dx*dx+dy*dy;
+
+      if(distanciaCuadrada > 0 && distanciaCuadrada < radioEmpuje*radioEmpuje) {
+        // const distancia = Math.sqrt(distanciaCuadrada);
+        this.aplicarFuerza(dx / distanciaCuadrada * fuerzaEmpuje, dy / distanciaCuadrada * fuerzaEmpuje);
+      }
+    });
   }
 
   render() {
