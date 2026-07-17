@@ -5,7 +5,7 @@ class Cliente extends Persona {
     this.puntoSpawn = { x, y };
     this.despachado = false;
     
-    this.velocidadBase = 2.8; 
+    this.velocidadBase = CONFIGURACION.cliente.velocidadMaxima; 
     this.velocidadMaxima = this.velocidadBase;
 
     this.id = Math.floor(Math.random() * 10000); 

@@ -2,7 +2,7 @@ class Protagonista extends Persona {
   constructor(x, y, textures, juego) {
     super(x, y, textures, juego);
     
-    this.velocidadMaxima = 5;
+    this.velocidadMaxima = CONFIGURACION.protagonista.velocidadMaxima;
 
     this.itemSostenido = null; 
     
@@ -132,7 +132,7 @@ class Protagonista extends Persona {
   }
 
   manejarmeConElTeclado() {
-    const fuerza = 0.002;
+    const fuerza = CONFIGURACION.protagonista.fuerzaMovimiento;
     let moviendoseHorizontal = false;
 
     if (this.juego.teclado.a) {

@@ -3,11 +3,11 @@ class Persona extends GameObject {
     super(x, y, juego);
 
     this.juego.personas.push(this);
-    this.velocidadBase = 1.5;
+    this.velocidadBase = CONFIGURACION.npc.velocidadBasePorDefecto;
     this.velocidadMaxima = this.velocidadBase;
     this.offsetY = 0; 
 
-    this.body = Matter.Bodies.circle(x, y, 12, { frictionAir: 0.15 });
+    this.body = Matter.Bodies.circle(x, y, CONFIGURACION.npc.radioCuerpo, { frictionAir: CONFIGURACION.npc.friccionAire });
     Matter.Composite.add(this.juego.world, this.body);
 
     this.spritesAnimados = {};
@@ -70,7 +70,7 @@ class Persona extends GameObject {
     const distancia = Math.hypot(dx, dy);
 
     if (distancia > 15) {
-      const fuerza = 0.00005 * this.velocidadMaxima;
+      const fuerza = CONFIGURACION.npc.multiplicadorFuerza * this.velocidadMaxima;
       this.aplicarFuerza((dx / distancia) * fuerza, (dy / distancia) * fuerza);
 
       if (this.spritesAnimados) {

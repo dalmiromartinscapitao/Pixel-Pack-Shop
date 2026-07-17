@@ -7,7 +7,7 @@ class Ladron extends Persona {
     this.esLadron = true; 
 
     
-    this.velocidadBase = 3.5; 
+    this.velocidadBase = CONFIGURACION.ladron.velocidadMaxima;
     this.velocidadMaxima = this.velocidadBase;
 
    
