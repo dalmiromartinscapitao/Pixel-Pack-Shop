@@ -257,6 +257,31 @@ class Juego {
     if (this.containerPrincipal.y < limiteInf) this.containerPrincipal.y = limiteInf;
   }
 
+  debugMatter() {
+    if (!this.debugGraphics) {
+        this.debugGraphics = new PIXI.Graphics();
+        this.debugGraphics.zIndex = 99999;
+        this.containerPrincipal.addChild(this.debugGraphics);
+    }
+
+    this.debugGraphics.clear();
+    
+    const bodies = Matter.Composite.allBodies(this.world);
+    for (let i = 0; i < bodies.length; i++) {
+        const body = bodies[i];
+        const vertices = body.vertices;
+        
+        const path = [];
+        for (let j = 0; j < vertices.length; j++) {
+            path.push(vertices[j].x, vertices[j].y);
+        }
+        
+        this.debugGraphics.poly(path);
+        this.debugGraphics.fill({ color: 0xff0000, alpha: 0.5 });
+        this.debugGraphics.stroke({ width: 1, color: 0xffffff });
+    }
+  }
+
   gameLoop() {
     if (!this.juegoTerminado) {
       Matter.Engine.update(this.engine, 1000 / 60);
@@ -309,6 +334,8 @@ class Juego {
 
     if (this.uiDinero && !this.juegoTerminado) this.uiDinero.update();
     if (!this.juegoTerminado) this.moverCamara();
+
+    this.debugMatter();
 
     requestAnimationFrame(() => this.gameLoop());
   }
