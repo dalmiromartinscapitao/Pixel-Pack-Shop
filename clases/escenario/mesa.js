@@ -8,7 +8,7 @@ class Mesa extends GameObject {
 
     const ancho = Math.abs(this.sprite.width);
     const alto = Math.abs(this.sprite.height);
-    this.offsetY = alto / 2;
+    this.offsetY = 0;
 
     // Colisión exacta 1:1 con el sprite
     this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto, { isStatic: true });

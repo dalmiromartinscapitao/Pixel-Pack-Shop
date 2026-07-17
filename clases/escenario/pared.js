@@ -10,7 +10,7 @@ class Pared extends GameObject {
 
     const ancho = Math.abs(this.sprite.width);
     const alto = Math.abs(this.sprite.height);
-    this.offsetY = alto / 2;
+    this.offsetY = 0;
 
     this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto, { isStatic: true });
     Matter.Composite.add(juego.world, this.body);

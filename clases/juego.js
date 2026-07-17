@@ -63,6 +63,7 @@ class Juego {
 
     this.containerPrincipal = new PIXI.Container();
     this.containerPrincipal.label = "container principal";
+    this.containerPrincipal.sortableChildren = true;
     this.pixiApp.stage.addChild(this.containerPrincipal);
 
     window.__PIXI_APP__ = this.pixiApp;
@@ -129,13 +130,13 @@ class Juego {
     new Ventana(1550, 200, this, this.texturaVentana, 0.35); 
 }
 
-  ponerMostradores() { new Mostrador(1000, 550, this); }
+  ponerMostradores() { new Mostrador(1000, 500, this); }
   
   ponerAnaqueles() {
-    new Anaquel(200, 450, this, this.texturaAnaquelAzul, "mangaazul");
-    new Anaquel(400, 450, this, this.texturaAnaquelRojo, "mangarojo");
-    new Anaquel(1350, 450, this, this.texturaAnaquelVerde, "mangaverde");
-    new Anaquel(1750, 450, this, this.texturaAnaquelPurpura, "mangapurpura");
+    new Anaquel(200, 430, this, this.texturaAnaquelAzul, "mangaazul");
+    new Anaquel(400, 430, this, this.texturaAnaquelRojo, "mangarojo");
+    new Anaquel(1350, 430, this, this.texturaAnaquelVerde, "mangaverde");
+    new Anaquel(1750, 430, this, this.texturaAnaquelPurpura, "mangapurpura");
   }
 
   ponerParedes() {
@@ -148,6 +149,18 @@ class Juego {
     for (let p of pos) {
         new Pared(p.x, p.y, this, p.e, p.sx, p.sy);
     }
+
+    // Límite superior (donde empieza la pared)
+    const limitePared = Matter.Bodies.rectangle(1950 / 2, 300, 1950, 20, { isStatic: true });
+    Matter.Composite.add(this.world, limitePared);
+
+    // Límite izquierdo
+    const limiteIzquierdo = Matter.Bodies.rectangle(0, this.altoMundo / 2, 20, this.altoMundo, { isStatic: true });
+    Matter.Composite.add(this.world, limiteIzquierdo);
+
+    // Límite derecho
+    const limiteDerecho = Matter.Bodies.rectangle(1950, this.altoMundo / 2, 20, this.altoMundo, { isStatic: true });
+    Matter.Composite.add(this.world, limiteDerecho);
 }
 
   ponerMesas() {
@@ -256,6 +269,31 @@ class Juego {
     if (this.containerPrincipal.y < limiteInf) this.containerPrincipal.y = limiteInf;
   }
 
+  debugMatter() {
+    if (!this.debugGraphics) {
+        this.debugGraphics = new PIXI.Graphics();
+        this.debugGraphics.zIndex = 99999;
+        this.containerPrincipal.addChild(this.debugGraphics);
+    }
+
+    this.debugGraphics.clear();
+    
+    const bodies = Matter.Composite.allBodies(this.world);
+    for (let i = 0; i < bodies.length; i++) {
+        const body = bodies[i];
+        const vertices = body.vertices;
+        
+        const path = [];
+        for (let j = 0; j < vertices.length; j++) {
+            path.push(vertices[j].x, vertices[j].y);
+        }
+        
+        this.debugGraphics.poly(path);
+        this.debugGraphics.fill({ color: 0xff0000, alpha: 0.5 });
+        this.debugGraphics.stroke({ width: 1, color: 0xffffff });
+    }
+  }
+
   gameLoop() {
     if (!this.juegoTerminado) {
       Matter.Engine.update(this.engine, 1000 / 60);
@@ -308,6 +346,9 @@ class Juego {
 
     if (this.uiDinero && !this.juegoTerminado) this.uiDinero.update();
     if (!this.juegoTerminado) this.moverCamara();
+
+    //debug:
+    this.debugMatter();
 
     requestAnimationFrame(() => this.gameLoop());
   }
