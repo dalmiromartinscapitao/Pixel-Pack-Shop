@@ -149,6 +149,18 @@ class Juego {
     for (let p of pos) {
         new Pared(p.x, p.y, this, p.e, p.sx, p.sy);
     }
+
+    // Límite superior (donde empieza la pared)
+    const limitePared = Matter.Bodies.rectangle(1950 / 2, 300, 1950, 20, { isStatic: true });
+    Matter.Composite.add(this.world, limitePared);
+
+    // Límite izquierdo
+    const limiteIzquierdo = Matter.Bodies.rectangle(0, this.altoMundo / 2, 20, this.altoMundo, { isStatic: true });
+    Matter.Composite.add(this.world, limiteIzquierdo);
+
+    // Límite derecho
+    const limiteDerecho = Matter.Bodies.rectangle(1950, this.altoMundo / 2, 20, this.altoMundo, { isStatic: true });
+    Matter.Composite.add(this.world, limiteDerecho);
 }
 
   ponerMesas() {
