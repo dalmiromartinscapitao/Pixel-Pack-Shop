@@ -26,7 +26,7 @@ class Protagonista extends Persona {
       
       for (let key of Object.keys(this.spritesAnimados)) {
         this.spritesAnimados[key].scale.set(0.2); 
-        this.spritesAnimados[key].animationSpeed = 0.1; 
+        this.spritesAnimados[key].animationSpeed = 0.04; 
       }
     } else {
       console.error("El JSON de protagonista no se cargó correctamente.");
