@@ -130,13 +130,13 @@ class Juego {
     new Ventana(1550, 200, this, this.texturaVentana, 0.35); 
 }
 
-  ponerMostradores() { new Mostrador(1000, 550, this); }
+  ponerMostradores() { new Mostrador(1000, 500, this); }
   
   ponerAnaqueles() {
-    new Anaquel(200, 450, this, this.texturaAnaquelAzul, "mangaazul");
-    new Anaquel(400, 450, this, this.texturaAnaquelRojo, "mangarojo");
-    new Anaquel(1350, 450, this, this.texturaAnaquelVerde, "mangaverde");
-    new Anaquel(1750, 450, this, this.texturaAnaquelPurpura, "mangapurpura");
+    new Anaquel(200, 430, this, this.texturaAnaquelAzul, "mangaazul");
+    new Anaquel(400, 430, this, this.texturaAnaquelRojo, "mangarojo");
+    new Anaquel(1350, 430, this, this.texturaAnaquelVerde, "mangaverde");
+    new Anaquel(1750, 430, this, this.texturaAnaquelPurpura, "mangapurpura");
   }
 
   ponerParedes() {
@@ -335,6 +335,7 @@ class Juego {
     if (this.uiDinero && !this.juegoTerminado) this.uiDinero.update();
     if (!this.juegoTerminado) this.moverCamara();
 
+    //debug:
     this.debugMatter();
 
     requestAnimationFrame(() => this.gameLoop());

@@ -8,9 +8,9 @@ class Mostrador extends GameObject {
 
     const ancho = Math.abs(this.sprite.width);
     const alto = Math.abs(this.sprite.height);
-    this.offsetY = 0;
+    this.offsetY = alto*0.25
 
-    this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto, { isStatic: true });
+    this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto/2, { isStatic: true });
     Matter.Composite.add(juego.world, this.body);
 
     juego.mostradores.push(this);

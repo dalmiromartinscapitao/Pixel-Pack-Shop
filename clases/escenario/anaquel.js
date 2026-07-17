@@ -17,9 +17,9 @@ class Anaquel extends GameObject {
 
         const ancho = 111 * escala;
         const alto = 187 * escala;
-        this.offsetY = alto / 2;
+        this.offsetY = alto*0.1 
 
-        this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto, { isStatic: true });
+        this.body = Matter.Bodies.rectangle(x, y - (alto / 2), ancho, alto/4, { isStatic: true });
         Matter.Composite.add(juego.world, this.body);
 
         juego.anaqueles.push(this);

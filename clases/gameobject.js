@@ -42,6 +42,7 @@ class GameObject {
   }
 
   update() {
+  
     this.render();
   }
 
@@ -52,8 +53,8 @@ class GameObject {
     this.posicion.y = this.body.position.y;
 
     this.container.x = this.posicion.x;
-    this.container.y = this.posicion.y;
+    this.container.y = this.posicion.y + this.offsetY;
 
-    this.container.zIndex = this.posicion.y + this.offsetY;
+    this.container.zIndex = this.container.y;
   }
 }

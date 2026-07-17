@@ -5,7 +5,7 @@ class Persona extends GameObject {
     this.juego.personas.push(this);
     this.velocidadBase = 1.5;
     this.velocidadMaxima = this.velocidadBase;
-    // this.offsetY = 14; 
+    this.offsetY = 0; 
 
     this.body = Matter.Bodies.circle(x, y, 12, { frictionAir: 0.15 });
     Matter.Composite.add(this.juego.world, this.body);
