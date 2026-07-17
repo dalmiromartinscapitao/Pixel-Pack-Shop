@@ -70,7 +70,7 @@ moverseHacia(tx, ty) {
     const distancia = Math.hypot(dx, dy);
 
     if (distancia > 15) {
-      const fuerza = 0.00005 * this.velocidadMaxima;
+      const fuerza = 0.0005 * this.velocidadMaxima;
       this.aplicarFuerza((dx / distancia) * fuerza, (dy / distancia) * fuerza);
 
       if (this.spritesAnimados) {
