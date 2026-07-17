@@ -63,6 +63,7 @@ class Juego {
 
     this.containerPrincipal = new PIXI.Container();
     this.containerPrincipal.label = "container principal";
+    this.containerPrincipal.sortableChildren = true;
     this.pixiApp.stage.addChild(this.containerPrincipal);
 
     window.__PIXI_APP__ = this.pixiApp;
